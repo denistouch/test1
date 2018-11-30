@@ -51,41 +51,52 @@ public class RootLayoutController {
 
     @FXML
     private void initialize() {
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.SELECTED_TAB);
+        extensionBox.getItems().addAll(".log", ".txt", ".java");
+        extensionBox.getSelectionModel().select(0);
+        extensionBox.show();
+
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         directoryTree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
         //service = Executors.newFixedThreadPool(3);
         directoryTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (event.getClickCount() >= 2) {
-                    Tab tab = new Tab(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().toString());
-                    System.out.println(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
-                    //Stream<String> streamText = null;
-                    try {
-                        BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
-                        String string = null;
-                        String text = "";
-                        while ((string = reader.readLine()) != null) {
-                            //System.out.println(string);
-                            text = text + string + "\n";
-                        }
-                        reader.close();
-                        tab.setClosable(true);
-                        searchIn = new TextField();
-                        documentContent = new TextArea();
-                        documentContent.setText(text);
-                        SplitPane splitPane = new SplitPane();
-                        splitPane.setOrientation(Orientation.VERTICAL);
-                        splitPane.getItems().add(0,searchIn);
-                        splitPane.getItems().add(1,documentContent);
+                if (directoryTree.getSelectionModel().getSelectedItem() != null) {
+                    nameSelection.setText(directoryTree.getSelectionModel().getSelectedItem().getValue().toString());
+                    if (event.getClickCount() >= 2) {
+                        Tab tab = new Tab(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().toString());
+                        System.out.println(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
+                        //Stream<String> streamText = null;
+                        try {
+                            BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
+                            String string = null;
+                            String text = "";
+                            while ((string = reader.readLine()) != null) {
+                                //System.out.println(string);
+                                text = text + string + "\n";
+                            }
+                            reader.close();
+                            tab.setClosable(true);
+                            searchIn = new TextField();
+                            documentContent = new TextArea();
+                            documentContent.setText(text);
+                            SplitPane splitPane = new SplitPane();
+                            splitPane.setOrientation(Orientation.VERTICAL);
+                            splitPane.getItems().add(0, searchIn);
+                            splitPane.getItems().add(1, documentContent);
 
-                        tab.setContent(splitPane);
-                        tabPane.getTabs().add(tab);
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
+                            tab.setContent(splitPane);
+                            tabPane.getTabs().add(tab);
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                            e.printStackTrace();
+                        }
                     }
-                }
+                } else
+                    System.out.println("FUCK!!!");
+
+
             }
         });
     }
