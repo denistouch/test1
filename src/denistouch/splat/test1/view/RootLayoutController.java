@@ -1,8 +1,11 @@
 package denistouch.splat.test1.view;
 
 import denistouch.splat.test1.MainApp;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -15,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.ExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RootLayoutController {
     @FXML
@@ -39,6 +44,9 @@ public class RootLayoutController {
     private TreeItem root;
     private TextField searchIn;
     private TextArea documentContent;
+
+    int match;
+
     //private Service service;
     ExecutorService service;
 
@@ -65,40 +73,77 @@ public class RootLayoutController {
                 if (directoryTree.getSelectionModel().getSelectedItem() != null) {
                     nameSelection.setText(directoryTree.getSelectionModel().getSelectedItem().getValue().toString());
                     if (event.getClickCount() >= 2) {
-                        Tab tab = new Tab(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().toString());
+                        createTab();
                         System.out.println(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
-                        //Stream<String> streamText = null;
-                        try {
-                            BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
-                            String string = null;
-                            String text = "";
-                            while ((string = reader.readLine()) != null) {
-                                //System.out.println(string);
-                                text = text + string + "\n";
-                            }
-                            reader.close();
-                            tab.setClosable(true);
-                            searchIn = new TextField();
-                            documentContent = new TextArea();
-                            documentContent.setText(text);
-                            SplitPane splitPane = new SplitPane();
-                            splitPane.setOrientation(Orientation.VERTICAL);
-                            splitPane.getItems().add(0, searchIn);
-                            splitPane.getItems().add(1, documentContent);
-
-                            tab.setContent(splitPane);
-                            tabPane.getTabs().add(tab);
-                        } catch (IOException e) {
-                            System.out.println(e.getMessage());
-                            e.printStackTrace();
-                        }
                     }
                 } else
                     System.out.println("FUCK!!!");
-
-
             }
         });
+    }
+
+    private void createTab() {
+        try {
+            Tab tab = new Tab(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().toString());
+            BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
+            String string = null;
+            String text = "";
+            while ((string = reader.readLine()) != null) {
+                //System.out.println(string);
+                text = text + string + "\n";
+            }
+            reader.close();
+            tab.setClosable(true);
+            searchIn = new TextField();
+            documentContent = new TextArea();
+            documentContent.setText(text);
+            SplitPane splitPane = new SplitPane();
+            splitPane.setOrientation(Orientation.VERTICAL);
+            splitPane.getItems().add(0, searchIn);
+            splitPane.getItems().add(1, documentContent);
+            tab.setContent(splitPane);
+            tabPane.getTabs().add(tab);
+            searchIn.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    Integer caretPosition;
+                    if (!searchIn.getText().equals("")) {
+                        if ((caretPosition = findInTab()) != null) {
+                            documentContent.selectRange(caretPosition, caretPosition + searchIn.getText().length());
+                            documentContent.setStyle("-fx-highlight-fill: yellow; -fx-highlight-text-fill: red");
+                            searchIn.setStyle("-fx--border-color: green");
+                        } else {
+                            documentContent.setStyle("-fx-background-color: red");
+                            documentContent.deselect();
+                        }
+                    } else {
+                        searchIn.setStyle("-fx-background-color: -fx-shadow-highlight-color, -fx-text-box-border, -fx-control-inner-background;");
+                        documentContent.setStyle("-fx-background-color: -fx-shadow-highlight-color, -fx-text-box-border, -fx-control-inner-background;");
+                        documentContent.deselect();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private Integer findInTab() {
+
+        String findWord, content;
+        findWord = searchIn.getText();
+        content = documentContent.getText();
+        match = 0;
+        Pattern findPattern = Pattern.compile(findWord, Pattern.LITERAL);
+        Matcher findMatcher = findPattern.matcher(content);
+        if (findMatcher.find()) {
+            return findMatcher.start();
+        }
+        return null;
+
+        //documentContent.selectRange(index[0],index[0] + findWord.length());
+
     }
 
     @FXML

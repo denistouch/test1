@@ -37,7 +37,7 @@
             </Menu>
             <Menu mnemonicParsing="false">
                <graphic>
-                  <Button fx:id="button" mnemonicParsing="false" stylesheets="@../style/caspian.css" text="Button" />
+                  <Button fx:id="button" mnemonicParsing="false" text="Button" />
                </graphic>
             </Menu>
       </menus>
