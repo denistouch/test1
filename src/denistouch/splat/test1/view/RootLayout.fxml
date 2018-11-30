@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="800.0" stylesheets="@../style/caspian.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="denistouch.splat.test1.view.RootLayoutController">
+  <children>
+    <MenuBar stylesheets="@../style/caspian.css" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false">
+               <graphic>
+                  <Button fx:id="openDir" mnemonicParsing="false" onAction="#setOnOpenHandler" stylesheets="@../style/caspian.css" text="Открыть каталог" />
+               </graphic>
+        </Menu>
+            <Menu mnemonicParsing="false">
+               <graphic>
+                  <TextField fx:id="searchField" prefHeight="25.0" prefWidth="172.0" promptText="Введите искомую строку" stylesheets="@../style/caspian.css" />
+               </graphic>
+            </Menu>
+            <Menu mnemonicParsing="false">
+               <graphic>
+                  <ChoiceBox fx:id="extensionBox" prefHeight="25.0" prefWidth="63.0" stylesheets="@../style/caspian.css" />
+               </graphic>
+            </Menu>
+            <Menu mnemonicParsing="false">
+               <graphic>
+                  <Button fx:id="button" mnemonicParsing="false" stylesheets="@../style/caspian.css" text="Button" />
+               </graphic>
+            </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" stylesheets="@../style/caspian.css" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane stylesheets="@../style/caspian.css">
+               <children>
+                  <TreeView fx:id="directoryTree" prefHeight="551.0" prefWidth="222.0" stylesheets="@../style/caspian.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+        </AnchorPane>
+            <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="423.0" stylesheets="@../style/caspian.css" tabClosingPolicy="UNAVAILABLE" />
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../style/caspian.css" VBox.vgrow="NEVER">
+      <children>
+        <Label fx:id="nameSelection" maxHeight="1.7976931348623157E308" maxWidth="-1.0" stylesheets="@../style/caspian.css" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" stylesheets="@../style/caspian.css" HBox.hgrow="ALWAYS" />
+        <Label fx:id="extensionSelection" font="$x3" maxWidth="-1.0" stylesheets="@../style/caspian.css" HBox.hgrow="NEVER" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>
