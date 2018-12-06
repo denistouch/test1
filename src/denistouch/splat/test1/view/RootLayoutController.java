@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -74,6 +73,7 @@ public class RootLayoutController {
                     nameSelection.setText(directoryTree.getSelectionModel().getSelectedItem().getValue().toString());
                     if (event.getClickCount() >= 2) {
                         createTab();
+                        //Content docTab = new Content();
                         System.out.println(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
                     }
                 } else
@@ -82,27 +82,37 @@ public class RootLayoutController {
         });
     }
 
-    private void createTab() {
+    private String readDoc() {
         try {
+        BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
+        String string = null;
+        String text = "";
+        while ((string = reader.readLine()) != null) {
+            //System.out.println(string);
+            text = text + string + "\n";
+        }
+        reader.close();
+        return text;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void createTab() {
             Tab tab = new Tab(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().toString());
-            BufferedReader reader = Files.newBufferedReader(directoryTree.getTreeItem(directoryTree.getSelectionModel().getSelectedIndex()).getValue().getPath());
-            String string = null;
-            String text = "";
-            while ((string = reader.readLine()) != null) {
-                //System.out.println(string);
-                text = text + string + "\n";
-            }
-            reader.close();
             tab.setClosable(true);
             searchIn = new TextField();
             documentContent = new TextArea();
-            documentContent.setText(text);
+            documentContent.setText(readDoc());
             SplitPane splitPane = new SplitPane();
             splitPane.setOrientation(Orientation.VERTICAL);
             splitPane.getItems().add(0, searchIn);
             splitPane.getItems().add(1, documentContent);
             tab.setContent(splitPane);
             tabPane.getTabs().add(tab);
+            //не нравится, оптимизировать
             searchIn.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -123,10 +133,7 @@ public class RootLayoutController {
                     }
                 }
             });
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+
     }
 
     private Integer findInTab() {
